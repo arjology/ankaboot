@@ -1,6 +1,6 @@
 # ankaboot
 ## <div dir="rtl">عنكبوت</div>
-![ankaboot](https://raw.githubusercontent.com/arjology/ankaboot/master/docs/figures/ankaboot.jpg | width=100)
+<img src="https://raw.githubusercontent.com/arjology/ankaboot/master/docs/figures/ankaboot.jpg" alt="logo" width="200"/>
 
 ### What is Ankaboot?
 
