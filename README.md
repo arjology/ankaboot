@@ -1,6 +1,6 @@
 # ankaboot
 ## <div dir="rtl">عنكبوت</div>
-![alt text](https://raw.githubusercontent.com/arjology/ankaboot/master/docs/figures/ankaboot.jpg "Logo Title Text 1" =250x)
+![alt text](https://raw.githubusercontent.com/arjology/ankaboot/master/docs/figures/ankaboot.jpg =250x)
 
 ### What is Ankaboot?
 
