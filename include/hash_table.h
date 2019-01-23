@@ -31,5 +31,7 @@ void ht_del_hash_table(ht_hash_table* ht);
 void ht_insert(ht_hash_table* ht, const char* key, const char* value);
 char* ht_search(ht_hash_table* ht, const char* key);
 void ht_delete(ht_hash_table* h, const char* key);
+static int ht_generic_hash(const char* s, const int a, const int m);
+static int ht_hash(const char* s, const int num_buckets, const int attempt);
 
 #endif  // HASH_TABLE_H_

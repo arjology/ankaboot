@@ -14,6 +14,7 @@
 #include "xmalloc.h"
 
 #include "graph_elements.h"
+#include "hash_table.h"
 #include "prime.h"
 
 // HT_DELETED_ITEM is used to mark a bucket containing a deleted item
@@ -25,13 +26,20 @@ static const int PRIME_1 = 151;
 static const int PRIME_2 = 163;
 static const int INITIAL_BASE_SIZE = 0;
 
-// Define initialization functions for and `neighbour`s.
+// Define initialization functions for `node`s and `neighbour`s.
 // This function allocates a chunk of memory the size
-// of an `neighbour`, and saves a copy of the `vertex` key
-// float `distance` in the new chunk of memory. The
-// function is marked as `static` because it will
-// only ever be called by code internal to the
+// of an `neighbour`, and saves a copy of the `key` and
+// float `distance`for neighbour, and `key` and `location` for the node,
+// in the new chunk of memory. The function is marked as
+// `static` because it will only ever be called by code internal to the
 // graph.
+
+static node* new_node(const char* key, gps* location) {
+    node* n = malloc(sizeof(node));
+    n->key = strdup(key);
+    n->location = location;
+    return n;
+}
 
 static neighbour* new_neighbour(const char* node, float* distance) {
     neighbour* n = malloc(sizeof(neighbour));
@@ -196,4 +204,92 @@ void delete_nodes(nodes_table* N) {
     }
     free(N->nodes);
     free(N);
+}
+
+// Insertion of a new key-value pair:
+// Iterate through indexes until an empty bucket is
+// found, where the item will be inserted and the hash
+// table's `count` attribute incremented to indicate
+// insertion of a new item. This is useful for
+// resizing. If encountering a deleted item, the new node
+// can be inserted in its place. If two items are inserted into the
+// same key, the keys will collide and the second item will be inserted
+// into the next available bucket. When searching for the key, the
+// original key will always be found and the second item will be
+// inaccessible. To handle this, the previous item can be deleted
+// and the new item inserted in its place.
+// To perform resizing, check load on hash table during inserts and deletes.
+void add_edge(edges_table* E, neighbour* n) {
+    const int load = E->count * 100 / E->size;
+    if (load > 70) {
+        resize_edges(E, 1);
+    }
+    int index = ht_hash(n->node, E->size, 0);
+    neighbour* cur_neighbour = E->neighbours[index];
+    int i = 1;
+    while(cur_neighbour != NULL) {
+        if (cur_neighbour != &DELETED_NEIGHBOUR) {
+            if (strcmp(cur_neighbour->node, n->node) == 0) {
+                delete_neighbour(cur_neighbour);
+                E->neighbours[index] = n;
+                return;
+            }
+        }
+        index = ht_hash(n->node, E->size, i);
+        cur_neighbour = E->neighbours[index];
+        i++;
+    }
+    E->neighbours[index] = n;
+    E->count++;
+}
+
+void add_node(nodes_table* N, node* n) {
+    const int load = N->count * 100 / N->size;
+    if (load > 70) {
+        resize_nodes(N, 1);
+    }
+    int index = ht_hash(n->key, N->size, 0);
+    node* cur_node = N->nodes[index];
+    int i = 1;
+    while(cur_node != NULL) {
+        if (cur_node != &DELETED_NODE) {
+            if (strcmp(cur_node->key, n->key) == 0) {
+                delete_node(cur_node);
+                N->nodes[index] = n;
+                return;
+            }
+        }
+        index = ht_hash(n->key, N->size, i);
+        cur_node = N->nodes[index];
+        i++;
+    }
+    N->nodes[index] = n;
+    N->count++;
+}
+
+// Searching for keys:
+// At iteration of the `while` loop check whether the item's key matches
+// the key of interest and return the value if found. If the `while` loop
+// reaches a `NULL` value then return `NULL` indicating that the item
+// was not found. Ignore and jump over item marked as deleted.
+node* find_node(nodes_table* N, const char* key) {
+    int index = ht_hash(key, N->size, 0);
+    node* n = N->nodes[index];
+    int i = 1;
+    while (n != NULL) {
+        if (n != &DELETED_NODE) {
+            if (strcmp(n->key, key) == 0) {
+                return n;
+            }
+        }
+        index = ht_hash(key, N->size, i);
+        n = N->nodes[index];
+        i++;
+    }
+    return NULL;
+}
+
+neighbour** find_neighbours(edges_table* E, const char* key) {
+    int index = ht_hash(key, N->size, 0);
+    neighbour** n = E->neighbours[index];
 }

@@ -13,7 +13,7 @@
 #include "geography.h"
 
 // Neighbor storign its key and its distance
-typedef struct neighbour {
+typedef struct {
     char* node;
     float* distance;
 } neighbour;
@@ -28,7 +28,7 @@ typedef struct {
 } edges_table;
 
 // Vertex and properties
-typedef struct node {
+typedef struct {
     char* key;
     gps* location;
 } node;
@@ -48,17 +48,18 @@ typedef struct {
 
 // Graph API
 edges_table* create_edges();
-void add_edge(edges_table* E, const neighbour* neighbour);
+void add_edge(edges_table* E, neighbour* n);
 void delete_edges(edges_table* E);
+neighbour** find_neighbours(edges_table* E, const char* key);
 
 nodes_table* create_nodes();
-void add_node(nodes_table* N, const node* node);
+void add_node(nodes_table* N, node* n);
 void delete_nodes(nodes_table* N);
+node* find_node(nodes_table* N, const char* key);
 
 graph* create_graph();
 void delete_graph(graph* G);
-char* find_node(graph* G, const char* node);
-neighbour** find_neighbours(graph* G, const char* node);
+
 
 
 #endif // GRAPH_ELEMENTS_H_
