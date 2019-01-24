@@ -64,8 +64,24 @@ static edges_table* create_edges_sized(const int size_index) {
     E->size = next_prime(base_size);
     
     E->count = 0;
-    E->neighbours = xcalloc((size_t)E->size, sizeof(neighbour*));
+    E->neighbours = xcalloc((size_t)E->size, sizeof(neighbours*));
     return E;
+}
+
+neighbours* create_neighbours(const int size_index) {
+    neighbours* n = xmalloc(sizeof(neighbours));
+    if (n != NULL) {
+        const int base_size = 50 << n->size_index;
+        n->size = next_prime(base_size);
+        
+        n->count = 0;
+        n->neighbours = xcalloc((size_t)n->size, sizeof(neighbours*));
+        if (n->neighbours == NULL) {
+            free(n);
+            return NULL;
+        }
+    }
+    return n;
 }
 
 edges_table* create_edges() {
@@ -145,9 +161,9 @@ static void resize_edges(edges_table* E, const int direction) {
     edges_table* new_E = create_edges_sized(new_size_index);
     // Iterate through existing hash table, add all items to new
     for (int i = 0; i < E->size; i++) {
-        neighbour* neighbour = E->neighbours[i];
-        if (neighbour != NULL && neighbour != &DELETED_NEIGHBOUR) {
-            add_edge(E, neighbour);
+        neighbours* n = E->neighbours[i];
+        if (n != NULL && n != &DELETED_NEIGHBOUR) {
+            add_edge(E, n);
         }
     }
     
@@ -185,7 +201,7 @@ static void delete_node(node* n) {
 
 void delete_edges(edges_table* E) {
     for (int i = 0; i < E->size; i++) {
-        neighbour* n = E->neighbours[i];
+        neighbours* n = E->neighbours[i];
         if (n != NULL && n != &DELETED_NEIGHBOUR) {
             delete_neighbour(n);
         }
@@ -225,7 +241,7 @@ void add_edge(edges_table* E, neighbour* n) {
         resize_edges(E, 1);
     }
     int index = ht_hash(n->node, E->size, 0);
-    neighbour* cur_neighbour = E->neighbours[index];
+    neighbours* cur_neighbour = E->neighbours[index];
     int i = 1;
     while(cur_neighbour != NULL) {
         if (cur_neighbour != &DELETED_NEIGHBOUR) {
@@ -290,6 +306,6 @@ node* find_node(nodes_table* N, const char* key) {
 }
 
 neighbour** find_neighbours(edges_table* E, const char* key) {
-    int index = ht_hash(key, N->size, 0);
+    int index = ht_hash(key, E->size, 0);
     neighbour** n = E->neighbours[index];
 }

@@ -18,13 +18,20 @@ typedef struct {
     float* distance;
 } neighbour;
 
+typedef struct {
+    neighbour** neighbours;
+    int size_index;
+    int size;
+    int count;
+} neighbours;
+
 // Vertex defined by a key
 typedef struct {
     int size_index;
     int size;
     int count;
     char* node;
-    neighbour** neighbours;
+    neighbours** neighbours;
 } edges_table;
 
 // Vertex and properties
@@ -46,12 +53,17 @@ typedef struct {
     edges_table E;
 } graph;
 
+// ------------------------------------------
 // Graph API
+
+// Edges
 edges_table* create_edges();
 void add_edge(edges_table* E, neighbour* n);
 void delete_edges(edges_table* E);
 neighbour** find_neighbours(edges_table* E, const char* key);
+neighbours* create_neighbours(const int size_index);
 
+//Nodes
 nodes_table* create_nodes();
 void add_node(nodes_table* N, node* n);
 void delete_nodes(nodes_table* N);
