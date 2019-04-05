@@ -14,7 +14,6 @@ int tests_run = 0;
 
 
 static char* test_insert() {
-    printf("*** test_insert\n");
     ht_hash_table* ht = ht_new();
 
     ht_insert(ht, "k", "v");
@@ -44,9 +43,8 @@ static char* test_insert() {
 
 
 static char* test_insert_lots_of_items() {
-    printf("*** test_insert_lots_of_items\n");
     ht_hash_table* ht = ht_new();
-    for (int i = 0; i < 50000; i++) {
+    for (int i = 0; i < 20000; i++) {
         char key[10];
         snprintf(key, 10, "%d", i);
         ht_insert(ht, key, "value");
@@ -56,7 +54,6 @@ static char* test_insert_lots_of_items() {
 
 
 static char* test_insert_with_duplicate_key() {
-    printf("*** test_insert_with_duplicate_key\n");
     ht_hash_table* ht = ht_new();
     ht_insert(ht, "key", "value 1");
     ht_insert(ht, "key", "value 2");
@@ -68,7 +65,6 @@ static char* test_insert_with_duplicate_key() {
 
 
 static char* test_search_with_invalid_key() {
-    printf("*** test_search_with_invalid_key\n");
     // New empty hash table
     ht_hash_table* ht = ht_new();
     char* value = ht_search(ht, "invalid_key");
@@ -79,18 +75,16 @@ static char* test_search_with_invalid_key() {
 
 
 static char* test_search_with_valid_key() {
-    printf("*** test_search_with_valid_key\n");
     ht_hash_table* ht = ht_new();
     ht_insert(ht, "k", "v");
     char* value = ht_search(ht, "k");
-    mu_assert("error, unexpected value", strings_equal(value, "v"));
+    mu_assert("error, unexpected value", strings_equal(value, "v")); 
     ht_del_hash_table(ht);
     return 0;
 }
 
 
 static char* test_search_with_colliding_keys() {
-    printf("*** test_search_with_colliding_keys\n");
     // I know from manual testing that the strings "bz" and "4" collide using
     // ht_hash, with an m value of 53.
     ht_hash_table* ht = ht_new();
@@ -112,7 +106,6 @@ static char* test_search_with_colliding_keys() {
 
 
 static char* test_delete() {
-    printf("*** test_delete\n");
     ht_hash_table* ht = ht_new();
     ht_insert(ht, "k", "v");
     ht_delete(ht, "k");
@@ -124,7 +117,6 @@ static char* test_delete() {
 
 
 static char* test_resize_up() {
-    printf("*** test_resize_up\n");
     // Smallest ht size is 53. Table resizes when a load ratio of 0.7 is hit.
     // This should happen on the 38'th insert.
     ht_hash_table* ht = ht_new();
@@ -134,6 +126,7 @@ static char* test_resize_up() {
         ht_insert(ht, key, "value");
     }
     mu_assert("error, ht should be size 53", ht->size == 53);
+
     ht_insert(ht, "one extra", "value");
     mu_assert("error, ht should be size 101", ht->size == 101);
 
@@ -143,7 +136,6 @@ static char* test_resize_up() {
 
 
 static char* test_resize_down() {
-    printf("*** test_resize_down\n");
     // Smallest ht size is 53. Table resizes when a load ratio of 0.7 is hit.
     // This should happen on the 38'th insert.
     ht_hash_table* ht = ht_new();
@@ -170,7 +162,6 @@ static char* test_resize_down() {
 
 
 static char* all_tests() {
-    printf("*** Runnng all tests...\n");
     mu_run_test(test_insert);
     mu_run_test(test_insert_lots_of_items);
     mu_run_test(test_insert_with_duplicate_key);
@@ -185,7 +176,6 @@ static char* all_tests() {
 
 
 int main() {
-    printf("*** Hash Table Unit tests\n");
     char* result = all_tests();
     if (result != 0) {
         printf("%s\n", result);

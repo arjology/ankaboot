@@ -1,10 +1,7 @@
-//
-//  prime.h
-//  hash_table
-//
-//  Created by Arjang Talattof on 21/01/2019.
-//  Copyright © 2019 Univerisity of Michigan. All rights reserved.
-//
+#ifndef PRIME_H_
+#define PRIME_H_
 
 int is_prime(const int x);
 int next_prime(int x);
+
+#endif  // PRIME_H_
