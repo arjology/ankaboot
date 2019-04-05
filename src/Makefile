@@ -2,17 +2,17 @@ BDIR=../build
 IDIR=../include
 TDIR=../test
 CC=gcc
-CFLAGS=-I$(IDIR)
+CFLAGS=-I$(IDIR) -Wall -Werror -Wextra -g
 
 ODIR=obj
 LDIR =../lib
 
 LIBS=-lm
 
-_DEPS= hash_table.h xmalloc.h prime.h graph_elements.h
+_DEPS= hash_table.h xmalloc.h prime.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o hash_table.o xmalloc.o prime.o graph_elements.o
+_OBJ = main.o hash_table.o xmalloc.o prime.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c $(DEPS)
